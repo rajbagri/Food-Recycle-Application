@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FoodRecycleApplication {
 
 	public static void main(String[] args) {
-		FirebaseConfig.init();
 		SpringApplication.run(FoodRecycleApplication.class, args);
 	}
 
