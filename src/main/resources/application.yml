@@ -4,5 +4,5 @@ spring:
 
   data:
     mongodb:
-      uri: spring.data.mongodb.uri=mongodb+srv://${MONGOUSER}:${MONGOPASSWORD}@${MONGOHOST}/?retryWrites=true&w=majority&appName=Cluster0
+      uri: ${{ MongoDB.MONGO_URL }}
       database: foodDatabase
