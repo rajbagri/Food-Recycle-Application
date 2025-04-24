@@ -4,5 +4,5 @@ spring:
 
   data:
     mongodb:
-      uri: ${{ MongoDB.MONGO_URL }}
+      uri: mongodb://mongo:${MONGOPASSWORD}@turntable.proxy.rlwy.net:27955
       database: foodDatabase
