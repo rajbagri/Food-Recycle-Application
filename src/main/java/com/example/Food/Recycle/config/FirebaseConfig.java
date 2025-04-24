@@ -17,22 +17,17 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class FirebaseConfig {
 
+    public static void initialize() throws IOException {
+        String firebaseConfig = System.getenv("FIREBASE_ADMIN_SDK");
 
-    @Value("${{FIREBASE_CONFIG_ADMIN_SDK}}")
-    private String firebaseJson;
+        ByteArrayInputStream serviceAccountStream = new ByteArrayInputStream(firebaseConfig.getBytes(StandardCharsets.UTF_8));
 
-    @PostConstruct
-    public void initializeFirebase() throws IOException {
-        InputStream stream = new ByteArrayInputStream(firebaseJson.getBytes(StandardCharsets.UTF_8));
-
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(stream))
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccountStream))
                 .build();
 
         if (FirebaseApp.getApps().isEmpty()) {
             FirebaseApp.initializeApp(options);
-            System.out.println("Firebase has been initialized.");
         }
     }
 }
-
