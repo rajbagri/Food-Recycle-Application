@@ -27,6 +27,10 @@ public class GoogleSignInController {
     public ResponseEntity<?> registerUser(@RequestBody Map<String, String> body) {
         String idToken = body.get("idToken");
 
+        if (idToken == null || idToken.isEmpty()) {
+            return ResponseEntity.badRequest().body("idToken is missing");
+        }
+
         try{
             FirebaseToken token = FirebaseAuth.getInstance().verifyIdToken(idToken);
 
