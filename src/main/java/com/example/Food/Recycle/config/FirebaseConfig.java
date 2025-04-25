@@ -16,18 +16,16 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class FirebaseConfig {
 
+    @Value("${FIREBASE_ADMIN_SDK}")
+    private String FIREBASE_CONFIG_STRING;
+
     @PostConstruct
     public void initialize() throws IOException {
-        String firebaseConfig = System.getenv("FIREBASE_ADMIN_SDK");
 
-        if (firebaseConfig == null || firebaseConfig.isEmpty()) {
-            throw new IllegalStateException("FIREBASE_ADMIN_SDK environment variable is not set");
-        }
-
-        ByteArrayInputStream serviceAccountStream = new ByteArrayInputStream(firebaseConfig.getBytes(StandardCharsets.UTF_8));
+        InputStream serviceAccount = new ByteArrayInputStream(FIREBASE_CONFIG_STRING.getBytes());
 
         FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccountStream))
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build();
 
         if (FirebaseApp.getApps().isEmpty()) {
