@@ -44,7 +44,7 @@ public class GoogleSignInController {
             User user = new User(name, email);
             user.setFirebaseUid(Uid);
 
-            userService.saveIfNotExists(user);
+            userService.saveUser(user);
 
             return ResponseEntity.ok("user registered successfully");
 
