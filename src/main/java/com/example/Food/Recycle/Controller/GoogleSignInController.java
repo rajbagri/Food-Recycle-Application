@@ -50,7 +50,8 @@ public class GoogleSignInController {
 
 
         } catch (FirebaseAuthException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Firebase Token");
+            String message = e.getMessage();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(message + "Invalid Firebase Token");
         }
 
     }
