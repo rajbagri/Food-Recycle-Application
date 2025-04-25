@@ -31,8 +31,8 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public void saveIfNotExists(User user) {
-        userRepository.save(user);
+    public User saveIfNotExists(User user) {
+        return userRepository.save(user);
     }
 
 
