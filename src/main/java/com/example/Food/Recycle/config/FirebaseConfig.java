@@ -13,12 +13,16 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
 @Configuration
 public class FirebaseConfig {
 
-    public static void initialize() throws IOException {
+    @PostConstruct
+    public void initialize() throws IOException {
         String firebaseConfig = System.getenv("FIREBASE_ADMIN_SDK");
+
+        if (firebaseConfig == null || firebaseConfig.isEmpty()) {
+            throw new IllegalStateException("FIREBASE_ADMIN_SDK environment variable is not set");
+        }
 
         ByteArrayInputStream serviceAccountStream = new ByteArrayInputStream(firebaseConfig.getBytes(StandardCharsets.UTF_8));
 
