@@ -34,9 +34,10 @@ public class UserService {
     public void saveIfNotExists(User user) {
         Optional<User> existingUser = userRepository.findByFirebaseUid(user.getFirebaseUid());
         if (existingUser.isEmpty()) {
-            userRepository.save(existingUser.get());
+            userRepository.save(user);
         }
     }
+
 
 
 }
