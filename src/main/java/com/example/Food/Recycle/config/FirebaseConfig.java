@@ -22,7 +22,7 @@ public class FirebaseConfig {
     @PostConstruct
     public void initialize() throws IOException {
 
-        InputStream serviceAccount = new ByteArrayInputStream(FIREBASE_CONFIG_STRING.getBytes());
+        InputStream serviceAccount = new ByteArrayInputStream(FIREBASE_CONFIG_STRING.getBytes(StandardCharsets.UTF_8));
 
         FirebaseOptions options = FirebaseOptions.builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
