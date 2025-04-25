@@ -31,8 +31,11 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User saveIfNotExists(User user) {
-        return userRepository.save(user);
+    public void saveIfNotExists(User user) {
+        Optional<User> existingUser = userRepository.findByFirebaseUid(user.getFirebaseUid());
+        if (existingUser.isEmpty()) {
+            userRepository.save(existingUser.get());
+        }
     }
 
 
