@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${FIREBASE_ADMIN_SDK}")
+    @Value("${firebase.config.string}")
     private String FIREBASE_CONFIG_STRING;
 
     @PostConstruct
