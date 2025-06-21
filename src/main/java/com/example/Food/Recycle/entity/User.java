@@ -21,6 +21,12 @@ public class User {
     private String password;
     private String firebaseUid;
 
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+
     // Getters and Setters
 }
 
