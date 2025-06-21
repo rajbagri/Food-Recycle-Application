@@ -1,14 +1,14 @@
-# Use OpenJDK 17 image
+# Use a minimal Java 17 base image
 FROM eclipse-temurin:17-jdk-alpine
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy your built jar (adjust the path if needed)
-COPY target/*.jar app.jar
+# Copy the specific jar file
+COPY target/restApi-0.0.1-SNAPSHOT.jar app.jar
 
-# Expose the port Spring Boot will run on
+# Expose the port Spring Boot runs on
 EXPOSE 8080
 
-# Start the Spring Boot app
+# Run the jar file
 ENTRYPOINT ["java", "-jar", "app.jar"]
