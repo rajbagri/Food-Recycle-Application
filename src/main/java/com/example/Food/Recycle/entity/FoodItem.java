@@ -1,27 +1,20 @@
 package com.example.Food.Recycle.entity;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
-@Document(collection = "foodItems")
 @Data
-@NoArgsConstructor
+@Document(collection = "fooditems")
 public class FoodItem {
-
     @Id
     private ObjectId id;
+    private String title;
+    private String description;
+    private String expiryDate;
 
-    private String foodName;
+    private ObjectId donorId; // Link to Donor
 
-    private int quantity;
-
-    private int price;
-
-    private String foodStatus;
+    // Getters and Setters
 }

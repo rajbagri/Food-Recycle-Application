@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
 @RestController
 @RequestMapping("/donor")
 public class DonorController {
@@ -20,47 +19,40 @@ public class DonorController {
     @Autowired
     private DonorService donorService;
 
-    @Autowired
-     private FoodService foodService;
-
-
-    @GetMapping
-    public ResponseEntity<List<Donor>> getAllDonor(){
-        List<Donor> allDonor = donorService.getAllDonor();
-        if(!allDonor.isEmpty()){
-            return new ResponseEntity<>(allDonor, HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @PostMapping
-    public ResponseEntity<Donor> createDonor(@RequestBody Donor donor){
-
-
+    @PostMapping("/register")
+    public ResponseEntity<?> createDonor(@RequestBody Donor donor, @RequestParam ObjectId userId) {
+        donor.setUserId(userId);
         donorService.saveDonor(donor);
-
         return new ResponseEntity<>(donor, HttpStatus.CREATED);
     }
 
-
-    @GetMapping("location/{myLocation}")
-    public ResponseEntity<List<Donor>> findDonorByLocation(@PathVariable String myLocation){
-        List<Donor> donorByLocation = donorService.findDonorByLocation(myLocation);
-        if(donorByLocation.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(donorByLocation, HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<List<Donor>> getAllDonors() {
+        return new ResponseEntity<>(donorService.getAllDonor(), HttpStatus.OK);
     }
 
-    @GetMapping("id/{myid}")
-    public Optional<Donor> findDonorById(@PathVariable ObjectId myid){
-        return donorService.findDonorById(myid);
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Donor> getDonorByUserId(@PathVariable ObjectId userId) {
+        Optional<Donor> donor = donorService.findDonorByUserId(userId);
+        return donor.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping("/id/{myId}")
-    public void deleteById(@PathVariable ObjectId myId){
-        donorService.deleteById(myId);
+    @GetMapping("/location/{location}")
+    public ResponseEntity<List<Donor>> getDonorsByLocation(@PathVariable String location) {
+        return new ResponseEntity<>(donorService.findDonorByLocation(location), HttpStatus.OK);
     }
 
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Donor> getDonorById(@PathVariable ObjectId id) {
+        return donorService.findDonorById(id)
+                .map(d -> new ResponseEntity<>(d, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @DeleteMapping("/id/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable ObjectId id) {
+        donorService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
 }
