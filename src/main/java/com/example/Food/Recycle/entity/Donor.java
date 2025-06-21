@@ -16,8 +16,6 @@ public class Donor {
     private ObjectId id;
     private String name;
     private String location;
-
-    private ObjectId userId; // Link to User
-
-    // Getters and Setters
+    private String email;
+    private ObjectId userId;
 }

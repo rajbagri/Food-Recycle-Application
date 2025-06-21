@@ -1,6 +1,5 @@
 package com.example.Food.Recycle.Controller;
 
-
 import com.example.Food.Recycle.entity.Donor;
 import com.example.Food.Recycle.entity.FoodItem;
 import com.example.Food.Recycle.service.DonorService;
@@ -11,10 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 
 @RestController
 @RequestMapping("/food")
@@ -26,12 +23,11 @@ public class FoodController {
     @Autowired
     private DonorService donorService;
 
-    // Only DONOR (linked to user) can add food
     @PostMapping("/add")
     public ResponseEntity<?> addFood(@RequestBody FoodItem foodItem, @RequestParam ObjectId userId) {
         Optional<Donor> donorOpt = donorService.findDonorByUserId(userId);
         if (donorOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not a donor");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not a registered donor");
         }
 
         foodItem.setDonorId(donorOpt.get().getId());
@@ -51,13 +47,13 @@ public class FoodController {
 
     @GetMapping("/id/{id}")
     public ResponseEntity<FoodItem> getFoodById(@PathVariable ObjectId id) {
-        Optional<FoodItem> food = foodService.getFoodById(id);
-        return food.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+        return foodService.getFoodById(id)
+                .map(food -> new ResponseEntity<>(food, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/id/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable ObjectId id) {
+    public ResponseEntity<Void> deleteFoodById(@PathVariable ObjectId id) {
         foodService.deleteFoodById(id);
         return ResponseEntity.noContent().build();
     }

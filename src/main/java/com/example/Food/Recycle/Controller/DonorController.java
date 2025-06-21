@@ -1,9 +1,7 @@
 package com.example.Food.Recycle.Controller;
 
 import com.example.Food.Recycle.entity.Donor;
-import com.example.Food.Recycle.entity.FoodItem;
 import com.example.Food.Recycle.service.DonorService;
-import com.example.Food.Recycle.service.FoodService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
 @RestController
 @RequestMapping("/donor")
 public class DonorController {
@@ -20,7 +19,7 @@ public class DonorController {
     private DonorService donorService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> createDonor(@RequestBody Donor donor, @RequestParam ObjectId userId) {
+    public ResponseEntity<Donor> createDonor(@RequestBody Donor donor, @RequestParam ObjectId userId) {
         donor.setUserId(userId);
         donorService.saveDonor(donor);
         return new ResponseEntity<>(donor, HttpStatus.CREATED);
@@ -33,8 +32,8 @@ public class DonorController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<Donor> getDonorByUserId(@PathVariable ObjectId userId) {
-        Optional<Donor> donor = donorService.findDonorByUserId(userId);
-        return donor.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+        return donorService.findDonorByUserId(userId)
+                .map(donor -> new ResponseEntity<>(donor, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
@@ -46,7 +45,7 @@ public class DonorController {
     @GetMapping("/id/{id}")
     public ResponseEntity<Donor> getDonorById(@PathVariable ObjectId id) {
         return donorService.findDonorById(id)
-                .map(d -> new ResponseEntity<>(d, HttpStatus.OK))
+                .map(donor -> new ResponseEntity<>(donor, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 

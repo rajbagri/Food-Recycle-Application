@@ -20,12 +20,11 @@ public class GoogleSignInController {
     @Autowired
     private UserService userService;
 
-    // Firebase Google Sign-In
     @PostMapping("/register")
-    public ResponseEntity<?> registerUserWithFirebase(@RequestBody Map<String, String> body) {
+    public ResponseEntity<?> registerWithFirebase(@RequestBody Map<String, String> body) {
         String idToken = body.get("idToken");
-        if (idToken == null || idToken.isEmpty()) {
-            return ResponseEntity.badRequest().body("idToken is missing");
+        if (idToken == null || idToken.isBlank()) {
+            return ResponseEntity.badRequest().body("Missing idToken");
         }
 
         try {
@@ -38,14 +37,13 @@ public class GoogleSignInController {
             user.setFirebaseUid(uid);
 
             userService.saveIfNotExists(user);
-            return ResponseEntity.ok("User registered via Firebase successfully");
+            return ResponseEntity.ok("User registered with Firebase");
 
         } catch (FirebaseAuthException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Firebase Token: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Firebase token: " + e.getMessage());
         }
     }
 
-    // Basic email/password Sign-In
     @PostMapping("/login")
     public ResponseEntity<?> loginWithEmailPassword(@RequestBody Map<String, String> body) {
         String email = body.get("email");
@@ -53,20 +51,18 @@ public class GoogleSignInController {
 
         Optional<User> user = userService.findByEmail(email);
         if (user.isPresent() && password.equals(user.get().getPassword())) {
-            return ResponseEntity.ok("User logged in successfully");
+            return ResponseEntity.ok("Login successful");
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }
     }
 
-    // Basic email/password Registration
     @PostMapping("/signup")
     public ResponseEntity<?> signupWithEmailPassword(@RequestBody User user) {
-        Optional<User> existingUser = userService.findByEmail(user.getEmail());
-        if (existingUser.isPresent()) {
+        if (userService.findByEmail(user.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
         }
         userService.saveUser(user);
-        return ResponseEntity.ok("User registered successfully with email/password");
+        return ResponseEntity.ok("Registered with email/password");
     }
 }

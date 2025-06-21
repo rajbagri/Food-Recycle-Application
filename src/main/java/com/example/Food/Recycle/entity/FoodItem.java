@@ -17,8 +17,5 @@ public class FoodItem {
     private String title;
     private String description;
     private String expiryDate;
-
     private ObjectId donorId; // Link to Donor
-
-    // Getters and Setters
 }

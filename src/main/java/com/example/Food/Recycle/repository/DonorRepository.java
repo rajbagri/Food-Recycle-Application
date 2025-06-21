@@ -12,5 +12,4 @@ public interface DonorRepository extends MongoRepository<Donor, ObjectId> {
     boolean existsByEmail(String email);
     List<Donor> findByLocation(String location);
     Optional<Donor> findByUserId(ObjectId userId);
-
 }

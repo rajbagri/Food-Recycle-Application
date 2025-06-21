@@ -23,21 +23,21 @@ public class UserController {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    @GetMapping("/id/{myId}")
-    public ResponseEntity<User> getUserById(@PathVariable ObjectId myId) {
-        return userService.getUserById(myId)
+    @GetMapping("/id/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable ObjectId id) {
+        return userService.getUserById(id)
                 .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    public void saveUser(@RequestBody User user) {
-        userService.saveUser(user);
+    public ResponseEntity<User> saveUser(@RequestBody User user) {
+        return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/id/{myId}")
-    public ResponseEntity<?> deleteUser(@PathVariable ObjectId myId) {
-        userService.deleteUser(myId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/id/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable ObjectId id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 }

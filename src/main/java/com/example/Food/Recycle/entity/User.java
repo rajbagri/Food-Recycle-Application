@@ -3,9 +3,7 @@ package com.example.Food.Recycle.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.bson.types.ObjectId;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -25,8 +23,4 @@ public class User {
         this.name = name;
         this.email = email;
     }
-
-
-    // Getters and Setters
 }
-
