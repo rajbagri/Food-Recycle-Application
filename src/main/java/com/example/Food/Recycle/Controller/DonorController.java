@@ -25,7 +25,6 @@ public class DonorController {
     @PostMapping("/register")
     public ResponseEntity<?> createDonor(@RequestBody Donor donor, @RequestParam String userId) {
         try {
-            // Convert hex string to ObjectId
             ObjectId objectId = new ObjectId(userId);
             donor.setUserId(objectId);
             Donor savedDonor = donorService.saveDonor(donor);
