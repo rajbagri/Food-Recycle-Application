@@ -24,7 +24,9 @@ public class GoogleSignInController {
     public ResponseEntity<?> registerWithFirebase(@RequestBody Map<String, String> body) {
         String idToken = body.get("idToken");
         if (idToken == null || idToken.isBlank()) {
-            return ResponseEntity.badRequest().body("Missing idToken");
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Missing idToken"
+            ));
         }
 
         try {
@@ -36,13 +38,20 @@ public class GoogleSignInController {
             User user = new User(name, email);
             user.setFirebaseUid(uid);
 
-            userService.saveIfNotExists(user);
-            return ResponseEntity.ok("User registered with Firebase");
+            User savedUser = userService.saveIfNotExists(user);
+
+            return ResponseEntity.ok(Map.of(
+                    "userId", savedUser.getId(),
+                    "message", "Registered with Firebase"
+            ));
 
         } catch (FirebaseAuthException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Firebase token: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                    "error", "Invalid Firebase token: " + e.getMessage()
+            ));
         }
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> loginWithEmailPassword(@RequestBody Map<String, String> body) {

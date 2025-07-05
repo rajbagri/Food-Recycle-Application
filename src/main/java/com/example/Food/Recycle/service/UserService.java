@@ -31,11 +31,12 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public void saveIfNotExists(User user) {
+    public User saveIfNotExists(User user) {
         Optional<User> existingUser = userRepository.findByFirebaseUid(user.getFirebaseUid());
         if (existingUser.isEmpty()) {
             userRepository.save(user);
         }
+        return user;
     }
 
     public Optional<User> findByEmail(String email) {
