@@ -15,8 +15,9 @@ public class DonorService {
     @Autowired
     private DonorRepository donorRepository;
 
-    public void saveDonor(Donor donor) {
+    public Donor saveDonor(Donor donor) {
         donorRepository.save(donor);
+        return donor;
     }
 
     public List<Donor> getAllDonor() {

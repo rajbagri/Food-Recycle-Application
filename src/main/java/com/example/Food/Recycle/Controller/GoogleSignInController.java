@@ -5,6 +5,7 @@ import com.example.Food.Recycle.service.UserService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,8 +41,10 @@ public class GoogleSignInController {
 
             User savedUser = userService.saveIfNotExists(user);
 
+            String userIdHex = savedUser.getId().toHexString();
+
             return ResponseEntity.ok(Map.of(
-                    "userId", savedUser.getId(),
+                    "userId", userIdHex,
                     "message", "Registered with Firebase"
             ));
 
@@ -49,26 +52,52 @@ public class GoogleSignInController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
                     "error", "Invalid Firebase token: " + e.getMessage()
             ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                    "error", "Server error: " + e.getMessage()
+            ));
         }
     }
-
 
     @PostMapping("/login")
     public ResponseEntity<?> loginWithEmailPassword(@RequestBody Map<String, String> body) {
         String email = body.get("email");
         String password = body.get("password");
 
-        Optional<User> user = userService.findByEmail(email);
-        if (user.isPresent() && password.equals(user.get().getPassword())) {
-            return ResponseEntity.ok("Login successful");
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        if (email == null || password == null) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Email and password are required"
+            ));
         }
+
+        Optional<User> userOptional = userService.findByEmail(email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (password.equals(user.getPassword())) {
+                String userIdHex = user.getId().toHexString();
+                return ResponseEntity.ok(Map.of(
+                        "userId", userIdHex,
+                        "message", "Login successful"
+                ));
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of(
+                "error", "Invalid email or password"
+        ));
     }
+
 
     @PostMapping("/signup")
     public ResponseEntity<?> signupWithEmailPassword(@RequestBody User user) {
-        if (userService.findByEmail(user.getEmail()).isPresent()) {
+        if (user.getEmail() == null || user.getPassword() == null) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "error", "Email and password are required"
+            ));
+        }
+
+        Optional<User> existingUser = userService.findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
                     "error", "Email already exists"
             ));
@@ -76,10 +105,11 @@ public class GoogleSignInController {
 
         User savedUser = userService.saveUser(user);
 
+        String userIdHex = savedUser.getId().toHexString();
+
         return ResponseEntity.ok(Map.of(
-                "userId", savedUser.getId(),
+                "userId", userIdHex,
                 "message", "Registered successfully"
         ));
     }
-
 }

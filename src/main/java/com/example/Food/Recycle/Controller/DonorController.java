@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -18,40 +19,101 @@ public class DonorController {
     @Autowired
     private DonorService donorService;
 
+    /**
+     * Registers a new donor
+     */
     @PostMapping("/register")
-    public ResponseEntity<Donor> createDonor(@RequestBody Donor donor, @RequestParam ObjectId userId) {
-        donor.setUserId(userId);
-        donorService.saveDonor(donor);
-        return new ResponseEntity<>(donor, HttpStatus.CREATED);
+    public ResponseEntity<?> createDonor(@RequestBody Donor donor, @RequestParam String userId) {
+        try {
+            // Convert hex string to ObjectId
+            ObjectId objectId = new ObjectId(userId);
+            donor.setUserId(objectId);
+            Donor savedDonor = donorService.saveDonor(donor);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    Map.of(
+                            "donorId", savedDonor.getId().toHexString(),
+                            "message", "Donor registered successfully"
+                    )
+            );
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("error", "Invalid userId format")
+            );
+        }
     }
 
+    /**
+     * Get all donors
+     */
     @GetMapping
     public ResponseEntity<List<Donor>> getAllDonors() {
-        return new ResponseEntity<>(donorService.getAllDonor(), HttpStatus.OK);
+        return ResponseEntity.ok(donorService.getAllDonor());
     }
 
+    /**
+     * Get donor by userId
+     */
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Donor> getDonorByUserId(@PathVariable ObjectId userId) {
-        return donorService.findDonorByUserId(userId)
-                .map(donor -> new ResponseEntity<>(donor, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<?> getDonorByUserId(@PathVariable String userId) {
+        try {
+            ObjectId objectId = new ObjectId(userId);
+            Optional<Donor> donorOptional = donorService.findDonorByUserId(objectId);
+
+            return donorOptional
+                    .map(donor -> ResponseEntity.ok(donor))
+                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                            (Donor) Map.of("error", "Donor not found for userId: " + userId)
+                    ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("error", "Invalid userId format")
+            );
+        }
     }
 
+    /**
+     * Get donors by location
+     */
     @GetMapping("/location/{location}")
     public ResponseEntity<List<Donor>> getDonorsByLocation(@PathVariable String location) {
-        return new ResponseEntity<>(donorService.findDonorByLocation(location), HttpStatus.OK);
+        return ResponseEntity.ok(donorService.findDonorByLocation(location));
     }
 
+    /**
+     * Get donor by donorId
+     */
     @GetMapping("/id/{id}")
-    public ResponseEntity<Donor> getDonorById(@PathVariable ObjectId id) {
-        return donorService.findDonorById(id)
-                .map(donor -> new ResponseEntity<>(donor, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<?> getDonorById(@PathVariable String id) {
+        try {
+            ObjectId objectId = new ObjectId(id);
+            Optional<Donor> donorOptional = donorService.findDonorById(objectId);
+
+            return donorOptional
+                    .map(donor -> ResponseEntity.ok(donor))
+                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                            (Donor) Map.of("error", "Donor not found for id: " + id)
+                    ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("error", "Invalid donorId format")
+            );
+        }
     }
 
+    /**
+     * Delete donor by donorId
+     */
     @DeleteMapping("/id/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable ObjectId id) {
-        donorService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteById(@PathVariable String id) {
+        try {
+            ObjectId objectId = new ObjectId(id);
+            donorService.deleteById(objectId);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("error", "Invalid donorId format")
+            );
+        }
     }
 }
