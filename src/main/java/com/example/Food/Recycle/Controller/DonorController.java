@@ -47,8 +47,9 @@ public class DonorController {
      * Get all donors
      */
     @GetMapping
-    public ResponseEntity<List<Donor>> getAllDonors() {
-        return ResponseEntity.ok(donorService.getAllDonor());
+    public ResponseEntity<?> getAllDonors() {
+        List<Donor> donors = donorService.getAllDonor();
+        return ResponseEntity.ok(donors);
     }
 
     /**
@@ -61,7 +62,7 @@ public class DonorController {
             Optional<Donor> donorOptional = donorService.findDonorByUserId(objectId);
 
             return donorOptional
-                    .map(donor -> ResponseEntity.ok(donor))
+                    .map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                             (Donor) Map.of("error", "Donor not found for userId: " + userId)
                     ));
@@ -76,8 +77,9 @@ public class DonorController {
      * Get donors by location
      */
     @GetMapping("/location/{location}")
-    public ResponseEntity<List<Donor>> getDonorsByLocation(@PathVariable String location) {
-        return ResponseEntity.ok(donorService.findDonorByLocation(location));
+    public ResponseEntity<?> getDonorsByLocation(@PathVariable String location) {
+        List<Donor> donors = donorService.findDonorByLocation(location);
+        return ResponseEntity.ok(donors);
     }
 
     /**
@@ -90,7 +92,7 @@ public class DonorController {
             Optional<Donor> donorOptional = donorService.findDonorById(objectId);
 
             return donorOptional
-                    .map(donor -> ResponseEntity.ok(donor))
+                    .map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                             (Donor) Map.of("error", "Donor not found for id: " + id)
                     ));
