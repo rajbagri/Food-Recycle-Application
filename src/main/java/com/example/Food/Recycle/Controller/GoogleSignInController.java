@@ -60,9 +60,17 @@ public class GoogleSignInController {
     @PostMapping("/signup")
     public ResponseEntity<?> signupWithEmailPassword(@RequestBody User user) {
         if (userService.findByEmail(user.getEmail()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                    "error", "Email already exists"
+            ));
         }
-        userService.saveUser(user);
-        return ResponseEntity.ok("Registered with email/password");
+
+        User savedUser = userService.saveUser(user);
+
+        return ResponseEntity.ok(Map.of(
+                "userId", savedUser.getId(),
+                "message", "Registered successfully"
+        ));
     }
+
 }
