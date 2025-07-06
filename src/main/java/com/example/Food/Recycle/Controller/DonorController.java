@@ -2,6 +2,7 @@ package com.example.Food.Recycle.Controller;
 
 import com.example.Food.Recycle.entity.Donor;
 import com.example.Food.Recycle.service.DonorService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +23,17 @@ public class DonorController {
      * Registers a new donor
      */
     @PostMapping("/register")
-    public ResponseEntity<?> createDonor(@RequestBody Donor donor, @RequestParam String userId) {
-        donor.setUserId(userId); // Set userId directly as String
+    public ResponseEntity<?> createDonor(@RequestBody Donor donor) {
+
+        String userId = new ObjectId().toHexString();
+
+        donor.setUserId(userId);
         Donor savedDonor = donorService.saveDonor(donor);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 Map.of(
                         "donorId", savedDonor.getId(),
+                        "userId", userId, // ✅ Include userId in response
                         "message", "Donor registered successfully"
                 )
         );
