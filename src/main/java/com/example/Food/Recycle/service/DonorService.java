@@ -40,7 +40,7 @@ public class DonorService {
         return donorRepository.findById(id);
     }
 
-    public Optional<Donor> findDonorByUserId(ObjectId userId) {
+    public Optional<Donor> findDonorByUserId(String userId) {
         return donorRepository.findByUserId(userId);
     }
 

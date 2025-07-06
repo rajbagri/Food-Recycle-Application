@@ -58,7 +58,7 @@ public class DonorController {
     public ResponseEntity<?> getDonorByUserId(@PathVariable String userId) {
         try {
             ObjectId objectId = new ObjectId(userId);
-            Optional<Donor> donorOptional = donorService.findDonorByUserId(objectId);
+            Optional<Donor> donorOptional = donorService.findDonorByUserId(objectId.toString());
 
             return donorOptional
                     .map(ResponseEntity::ok)
