@@ -5,7 +5,6 @@ import com.example.Food.Recycle.service.UserService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,10 +40,8 @@ public class GoogleSignInController {
 
             User savedUser = userService.saveIfNotExists(user);
 
-            String userIdHex = savedUser.getId().toHexString();
-
             return ResponseEntity.ok(Map.of(
-                    "userId", userIdHex,
+                    "userId", savedUser.getId(),
                     "message", "Registered with Firebase"
             ));
 
@@ -74,9 +71,8 @@ public class GoogleSignInController {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (password.equals(user.getPassword())) {
-                String userIdHex = user.getId().toHexString();
                 return ResponseEntity.ok(Map.of(
-                        "userId", userIdHex,
+                        "userId", user.getId(),
                         "message", "Login successful"
                 ));
             }
@@ -105,10 +101,8 @@ public class GoogleSignInController {
 
         User savedUser = userService.saveUser(user);
 
-        String userIdHex = savedUser.getId().toHexString();
-
         return ResponseEntity.ok(Map.of(
-                "userId", userIdHex,
+                "userId", savedUser.getId(),
                 "message", "Registered successfully"
         ));
     }

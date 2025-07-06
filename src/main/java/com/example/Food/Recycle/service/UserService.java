@@ -2,7 +2,6 @@ package com.example.Food.Recycle.service;
 
 import com.example.Food.Recycle.entity.User;
 import com.example.Food.Recycle.repository.UserRepository;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,19 +14,19 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public User saveUser(User user){
+    public User saveUser(User user) {
         return userRepository.save(user);
     }
 
-    public Optional<User> getUserById(ObjectId id){
+    public Optional<User> getUserById(String id) {
         return userRepository.findById(id);
     }
 
-    public void deleteUser(ObjectId id){
+    public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
 

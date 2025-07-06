@@ -2,7 +2,6 @@ package com.example.Food.Recycle.Controller;
 
 import com.example.Food.Recycle.entity.User;
 import com.example.Food.Recycle.service.UserService;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +23,7 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable ObjectId id) {
+    public ResponseEntity<User> getUserById(@PathVariable String id) {
         return userService.getUserById(id)
                 .map(user -> new ResponseEntity<>(user, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -36,7 +35,7 @@ public class UserController {
     }
 
     @DeleteMapping("/id/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable ObjectId id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }

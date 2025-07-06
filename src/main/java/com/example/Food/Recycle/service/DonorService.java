@@ -2,7 +2,6 @@ package com.example.Food.Recycle.service;
 
 import com.example.Food.Recycle.entity.Donor;
 import com.example.Food.Recycle.repository.DonorRepository;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,15 +35,15 @@ public class DonorService {
         return donorRepository.findByLocation(location);
     }
 
-    public Optional<Donor> findDonorById(ObjectId id) {
+    public Optional<Donor> findDonorById(String id) {
         return donorRepository.findById(id);
     }
 
-    public Optional<Donor> findDonorByUserId(ObjectId userId) {
+    public Optional<Donor> findDonorByUserId(String userId) {
         return donorRepository.findByUserId(userId);
     }
 
-    public void deleteById(ObjectId id) {
+    public void deleteById(String id) {
         donorRepository.deleteById(id);
     }
 }
