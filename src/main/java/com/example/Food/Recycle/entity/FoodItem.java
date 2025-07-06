@@ -20,5 +20,6 @@ public class FoodItem {
     private String title;
     private String description;
     private String expiryDate;
+    @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId donorId; // Link to Donor
 }
