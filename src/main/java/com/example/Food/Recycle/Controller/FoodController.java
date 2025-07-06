@@ -24,7 +24,7 @@ public class FoodController {
     private DonorService donorService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addFood(@RequestBody FoodItem foodItem, @RequestParam String userId) {
+    public ResponseEntity<?> addFood(@RequestBody FoodItem foodItem, @RequestParam ObjectId userId) {
         Optional<Donor> donorOpt = donorService.findDonorByUserId(userId);
         if (donorOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is not a registered donor");
