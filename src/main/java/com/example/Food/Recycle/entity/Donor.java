@@ -20,5 +20,6 @@ public class Donor {
     private String name;
     private String location;
     private String email;
+    @JsonSerialize(using = ToStringSerializer.class)
     private ObjectId userId;
 }
