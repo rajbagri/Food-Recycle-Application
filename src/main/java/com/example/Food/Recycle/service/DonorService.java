@@ -35,6 +35,10 @@ public class DonorService {
         return donorRepository.findByLocation(location);
     }
 
+    public Optional<Donor> findByUserId(String userId) {
+        return donorRepository.findByUserId(userId);
+    }
+
     public Optional<Donor> findDonorById(String id) {
         return donorRepository.findById(id);
     }
