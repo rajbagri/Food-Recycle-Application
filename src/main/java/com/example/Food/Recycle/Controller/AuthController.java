@@ -2,7 +2,6 @@ package com.example.Food.Recycle.Controller;
 
 import com.example.Food.Recycle.entity.User;
 import com.example.Food.Recycle.service.UserService;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +25,7 @@ public class AuthController {
             ));
         }
 
+        // Check if user already exists
         Optional<User> existingUser = userService.findByEmail(user.getEmail());
         if (existingUser.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
@@ -33,13 +33,13 @@ public class AuthController {
             ));
         }
 
-        // Generate userId if not set
-        if (user.getId() == null || user.getId().isBlank()) {
-            user.setId(new ObjectId().toHexString());
-        }
+        // ⚠️ Don't manually generate ObjectId, let MongoDB handle it
+        // If user already has an ID in request, ignore it
+        user.setId(null);
 
         User savedUser = userService.saveUser(user);
 
+        // Return the exact userId saved in DB
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
                 "userId", savedUser.getId(),
                 "message", "Registered successfully"
@@ -61,6 +61,7 @@ public class AuthController {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (password.equals(user.getPassword())) {
+                // Return the exact userId stored in DB
                 return ResponseEntity.ok(Map.of(
                         "userId", user.getId(),
                         "message", "Login successful"
