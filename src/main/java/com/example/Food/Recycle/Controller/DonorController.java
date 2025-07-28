@@ -2,7 +2,6 @@ package com.example.Food.Recycle.Controller;
 
 import com.example.Food.Recycle.entity.Donor;
 import com.example.Food.Recycle.service.DonorService;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,38 +18,31 @@ public class DonorController {
     @Autowired
     private DonorService donorService;
 
-    /**
-     * Registers a new donor
-     */
     @PostMapping("/register")
     public ResponseEntity<?> createDonor(@RequestBody Donor donor) {
+        if (donor.getUserId() == null || donor.getUserId().isBlank()) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("error", "userId is required to register donor")
+            );
+        }
 
-        String userId = new ObjectId().toHexString();
-
-        donor.setUserId(userId);
         Donor savedDonor = donorService.saveDonor(donor);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 Map.of(
                         "donorId", savedDonor.getId(),
-                        "userId", userId, // ✅ Include userId in response
+                        "userId", donor.getUserId(),
                         "message", "Donor registered successfully"
                 )
         );
     }
 
-    /**
-     * Get all donors
-     */
     @GetMapping
     public ResponseEntity<?> getAllDonors() {
         List<Donor> donors = donorService.getAllDonor();
         return ResponseEntity.ok(donors);
     }
 
-    /**
-     * Get donor by userId
-     */
     @GetMapping("/user/{userId}")
     public ResponseEntity<?> getDonorByUserId(@PathVariable String userId) {
         Optional<Donor> donorOptional = donorService.findDonorByUserId(userId);
@@ -62,18 +54,12 @@ public class DonorController {
                 ));
     }
 
-    /**
-     * Get donors by location
-     */
     @GetMapping("/location/{location}")
     public ResponseEntity<?> getDonorsByLocation(@PathVariable String location) {
         List<Donor> donors = donorService.findDonorByLocation(location);
         return ResponseEntity.ok(donors);
     }
 
-    /**
-     * Get donor by donorId
-     */
     @GetMapping("/id/{id}")
     public ResponseEntity<?> getDonorById(@PathVariable String id) {
         Optional<Donor> donorOptional = donorService.findDonorById(id);
@@ -85,9 +71,6 @@ public class DonorController {
                 ));
     }
 
-    /**
-     * Delete donor by donorId
-     */
     @DeleteMapping("/id/{id}")
     public ResponseEntity<?> deleteById(@PathVariable String id) {
         donorService.deleteById(id);
