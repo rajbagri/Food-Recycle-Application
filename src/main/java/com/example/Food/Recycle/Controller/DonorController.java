@@ -47,11 +47,12 @@ public class DonorController {
     public ResponseEntity<?> getDonorByUserId(@PathVariable String userId) {
         Optional<Donor> donorOptional = donorService.findDonorByUserId(userId);
 
-        return donorOptional
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        (Donor) Map.of("error", "Donor not found for userId: " + userId)
-                ));
+        if (donorOptional.isPresent()) {
+            return ResponseEntity.ok(donorOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Donor not found for userId: " + userId));
+        }
     }
 
     @GetMapping("/location/{location}")
@@ -64,11 +65,12 @@ public class DonorController {
     public ResponseEntity<?> getDonorById(@PathVariable String id) {
         Optional<Donor> donorOptional = donorService.findDonorById(id);
 
-        return donorOptional
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                        (Donor) Map.of("error", "Donor not found for id: " + id)
-                ));
+        if (donorOptional.isPresent()) {
+            return ResponseEntity.ok(donorOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Donor not found for id: " + id));
+        }
     }
 
     @DeleteMapping("/id/{id}")
